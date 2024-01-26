@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mapa do Brasil por Cidades</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        path {
+            stroke: #fff;
+            stroke-width: 0.5;
+        }
+        path:hover {
+            fill: darkorange;
+        }
+
+            body, html {
+                height: 100%;
+                margin: 0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background-color: #f0f0f0;
+            }
+            svg {
+                border: 1px solid #000; /* Opcional, apenas para visualização */
+            }
+
+        
+    </style>
+</head>
+<body>
+<svg width="960" height="800"></svg>
+<script>
+    // Carrega os dados geográficos
+    d3.json("geojs-100-mun.json").then(function(data) {
+        drawMap(data);
+    });
+
+    // Função para desenhar o mapa
+    function drawMap(data) {
+        const svg = d3.select("svg");
+        // Configura a projeção usada para converter os dados geográficos em pontos no SVG
+        const projection = d3.geoMercator()
+                             .scale(1000) // Escala para ajustar o mapa ao SVG
+                             .center([-54, -8]); // Centro do mapa (longitude e latitude)
+        const path = d3.geoPath().projection(projection);
+
+        // Adiciona um path para cada cidade usando os dados do GeoJSON
+        svg.selectAll("path")
+           .data(data.features)
+           .enter().append("path")
+           .attr("d", path)
+           .attr("fill", "lightgray") // Cor de preenchimento dos estados
+           .attr("stroke", "white") // Cor da linha de contorno
+           .on("mouseover", function(event, d) { // Evento de mouseover para mudança de cor
+              // d3.select(this).attr("fill", "darkorange");
+                // Mostrar tooltip
+                d3.select("#tooltip")
+                    .style("visibility", "visible")
+                    .html(d.properties.description) // Usar a descrição do município
+                    .style("left", (event.pageX + 10) + "px") // Posiciona o tooltip perto do mouse
+                    .style("top", (event.pageY + 10) + "px");               
+           })
+           .on("mouseout", function(d) { // Retornando a cor original ao tirar o mouse
+               //d3.select(this).attr("fill", "lightgray");
+               d3.select("#tooltip").style("visibility", "hidden");
+           });
+    }
+</script>
+</body>
+</html>

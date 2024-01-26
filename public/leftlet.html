@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>Mapa do Brasil com Leaflet</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        #map { height: 600px; }
+    </style>
+</head>
+<body>
+
+<div id="map"></div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+    // Inicializa o mapa e define suas coordenadas e zoom inicial
+    var map = L.map('map').setView([-15, -52], 4);
+
+    // Adiciona uma camada base ao mapa usando OpenStreetMap
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Função chamada para cada recurso no GeoJSON
+    function onEachFeature(feature, layer) {
+        if (feature.properties && feature.properties.description) {
+            // Mostra a descrição do município no tooltip ao passar o mouse
+            layer.bindTooltip(feature.properties.description);
+        }
+    }
+
+    // Carrega o GeoJSON do arquivo local 'geojs-100-mun.json'
+    fetch('geojs-100-mun.json')
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(data) {
+            L.geoJSON(data, {
+                onEachFeature: onEachFeature
+            }).addTo(map);
+        })
+        .catch(function(error) {
+            console.error('Erro ao carregar o GeoJSON:', error);
+        });
+</script>
+
+</body>
+</html>
