@@ -10,4 +10,4 @@ e execute
 node  server.js
 ```
 
-após acesse http://localhost:3000/public/leftlet.html ou http://localhost:3000/public/index.html
+após acesse http://localhost:3000/leftlet.html ou http://localhost:3000/index.html
